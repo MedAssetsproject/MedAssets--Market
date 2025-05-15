@@ -1,12 +1,22 @@
 "use client";
 
 import DataCard from "./DataCard";
-import { dataList } from "@/lib/data";
+import { getDataList, MarketData } from "@/lib/data";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Subscribe() {
   const router = useRouter();
-  const subscribedData = dataList.filter((item) => item.issubscribe);
+  const [subscribedData, setSubscribedData] = useState<MarketData[]>([]);
+
+  useEffect(() => {
+    function syncData() {
+      setSubscribedData(getDataList().filter((item) => item.issubscribe));
+    }
+    syncData();
+    window.addEventListener("storage", syncData);
+    return () => window.removeEventListener("storage", syncData);
+  }, []);
 
   return (
     <section className="w-full max-w-6xl mx-auto mt-12 mb-10">

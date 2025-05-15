@@ -8,6 +8,8 @@ export interface MarketData {
   issubscribe: boolean;
 }
 
+const STORAGE_KEY = "market_data_list";
+
 export const dataList: MarketData[] = [
   {
     id: 1,
@@ -15,16 +17,16 @@ export const dataList: MarketData[] = [
     desc: "High-quality, anonymized human genome sequencing data for research and analysis.",
     price: "0.01",
     content: "111111",
-    owner: "0x1234...abcd",
+    owner: "me",
     issubscribe: true,
   },
   {
     id: 2,
     title: "Blood Test Records",
     desc: "Comprehensive blood test results dataset, including CBC, metabolic panel, and more.",
-    price: "0.02",
+    price: "0.002",
     content: "111111",
-    owner: "0x5678...efgh",
+    owner: "aaaaaaaa",
     issubscribe: false,
   },
   {
@@ -33,7 +35,7 @@ export const dataList: MarketData[] = [
     desc: "Aggregated step count and heart rate data from wearable devices (2019-2023).",
     price: "0.03",
     content: "111111",
-    owner: "0x9abc...ijkl",
+    owner: "me",
     issubscribe: true,
   },
   {
@@ -65,10 +67,24 @@ export const dataList: MarketData[] = [
   },
 ];
 
-// 模拟SQL：更新issubscribe字段
+export function getDataList(): MarketData[] {
+  if (typeof window !== "undefined") {
+    const str = localStorage.getItem(STORAGE_KEY);
+    if (str) {
+      try {
+        return JSON.parse(str);
+      } catch {}
+    }
+  }
+  return dataList;
+}
+
 export function updateSubscribeStatus(id: number, status: boolean) {
-  const item = dataList.find((d) => d.id === id);
-  if (item) {
-    item.issubscribe = status;
+  let list = getDataList();
+  list = list.map((item) =>
+    item.id === id ? { ...item, issubscribe: status } : item
+  );
+  if (typeof window !== "undefined") {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }
 }
