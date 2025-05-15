@@ -17,10 +17,17 @@ export default function AddData({ onAdd }: { onAdd?: () => void }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setForm((prev) => ({ ...prev, content: file.name }));
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.title || !form.desc || !form.price || !form.content) {
-      setMsg("请填写所有字段");
+      setMsg("please fill all fields");
       return;
     }
     const list = getDataList();
@@ -36,7 +43,7 @@ export default function AddData({ onAdd }: { onAdd?: () => void }) {
     };
     const newList = [...list, newData];
     localStorage.setItem("market_data_list", JSON.stringify(newList));
-    setMsg("添加成功！");
+    setMsg("add success");
     setForm({ title: "", desc: "", price: "", content: "" });
     if (onAdd) onAdd();
     window.dispatchEvent(new Event("storage")); // 通知其他组件刷新
@@ -47,7 +54,7 @@ export default function AddData({ onAdd }: { onAdd?: () => void }) {
       onSubmit={handleSubmit}
       className="max-w-xl mx-auto bg-white p-6 rounded shadow mb-8"
     >
-      <h3 className="text-xl font-bold mb-4">添加新数据</h3>
+      <h3 className="text-xl font-bold mb-4">Add New Data</h3>
       <input
         className="w-full border p-2 mb-2 rounded"
         name="title"
@@ -69,18 +76,21 @@ export default function AddData({ onAdd }: { onAdd?: () => void }) {
         value={form.price}
         onChange={handleChange}
       />
-      <textarea
+      <input
         className="w-full border p-2 mb-2 rounded"
         name="content"
+        type="file"
+        onChange={handleFileChange}
         placeholder="Content"
-        value={form.content}
-        onChange={handleChange}
       />
+      <div className="text-sm text-gray-500 mb-2">
+        {form.content ? `Chosen file: ${form.content}` : "No file chosen"}
+      </div>
       <button
         type="submit"
         className="bg-[#8af7ff] text-black px-6 py-2 rounded font-bold mt-2"
       >
-        确认添加
+        Confirm Add
       </button>
       {msg && <div className="mt-2 text-green-600">{msg}</div>}
     </form>
