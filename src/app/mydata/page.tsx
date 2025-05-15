@@ -1,8 +1,11 @@
-export default function MyData() {
+import MyData from "@/components/MyData";
+import AddData from "@/components/AddData";
+
+export default function MyDataPage() {
   return (
     <div className="container mx-auto p-4 bg-white min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">My Data</h1>
-      <p className="text-gray-600">Coming soon...</p>
+      <AddData />
+      <MyData />
     </div>
   );
 }

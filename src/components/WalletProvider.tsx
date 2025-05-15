@@ -19,7 +19,8 @@ export const WalletProvider: FC<Props> = ({ children }) => {
   // const network = WalletAdapterNetwork.Devnet;
 
   const RPC_ENDPOINT =
-    "https://devnet.helius-rpc.com/?api-key=0422440e-2b28-48a5-8683-fb4de54ee525";
+    // "https://devnet.helius-rpc.com/?api-key=2b400035-55eb-4f6b-9bef-ea056680b223";
+    "https://mainnet.helius-rpc.com/?api-key=2b400035-55eb-4f6b-9bef-ea056680b223";
   const endpoint = useMemo(() => RPC_ENDPOINT, []);
 
   // 配置支持的钱包

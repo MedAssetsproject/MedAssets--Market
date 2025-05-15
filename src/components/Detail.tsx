@@ -1,6 +1,6 @@
 "use client";
 
-import { MarketData, updateSubscribeStatus } from "@/lib/data";
+import { MarketData, getDataList, updateSubscribeStatus } from "@/lib/data";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import {
   PublicKey,
@@ -8,12 +8,24 @@ import {
   Transaction,
   SystemProgram,
 } from "@solana/web3.js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const RECEIVER = "5Vw4oLtvEWNPcXRseR5ou4CqGNabLGG7zYCRf1SqUrKb";
 
 export default function Detail({ data }: { data: MarketData }) {
+  // 每次渲染都从localStorage读取最新数据
   const [issub, setIssub] = useState(data.issubscribe);
+  useEffect(() => {
+    const latest = getDataList().find((item) => item.id === data.id);
+    if (latest) setIssub(latest.issubscribe);
+    function syncData() {
+      const latest = getDataList().find((item) => item.id === data.id);
+      if (latest) setIssub(latest.issubscribe);
+    }
+    window.addEventListener("storage", syncData);
+    return () => window.removeEventListener("storage", syncData);
+  }, [data.id]);
+
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const { publicKey, sendTransaction, connected } = useWallet();
@@ -64,6 +76,7 @@ export default function Detail({ data }: { data: MarketData }) {
       setIssub(true);
       updateSubscribeStatus(data.id, true);
       setMsg("订阅成功！");
+      setTimeout(() => window.location.reload(), 500);
     } catch (e: unknown) {
       setMsg("转账失败: " + (e instanceof Error ? e.message : String(e)));
     }
